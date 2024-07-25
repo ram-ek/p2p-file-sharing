@@ -1,12 +1,12 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
-#include <netdb.h>
-#include <thread>
+#ifndef _HEADERS__H
+#define _HEADERS__H
+
 #include <iostream>
-#include <fcntl.h>
+#include <vector>
+#include <sstream>
+
+using namespace std;
+
+void get_console(void);
+
+#endif
