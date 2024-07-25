@@ -6,8 +6,8 @@ all: client
 %.o: %.h %.cpp
 	$(CC) $(CFLAGS) -c $^
 
-client: cmd.o client.cpp
+client: cmd.o utils.o client.cpp
 	$(CC) $(CFLAGS) -o client.out $^
 
 clean:
-	rm -rf *.o client
+	rm -rf *.o client.out

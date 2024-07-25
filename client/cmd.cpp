@@ -18,5 +18,10 @@ void get_console() {
 
         if(inp_tok[0] == "quit")
             break;
+
+        // do sanity checks
+        
+
+        // send commands to server for processing
     }
 }
