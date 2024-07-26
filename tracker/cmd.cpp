@@ -11,11 +11,7 @@ void get_console() {
         if(inp_tok.size() == 0)
             continue;
 
-        // todo - more checks needed
         if(inp_tok.size() == 1 && inp_tok[0] == "quit")
             break;
-
-        // send commands to server for processing
-        // send_cmd(inp);
     }
 }

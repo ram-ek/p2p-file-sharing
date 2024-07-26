@@ -2,25 +2,25 @@
 #define _HEADERS__H
 
 #include <iostream>
-#include <vector>
-#include <map>
-#include <set>
 #include <string>
+#include <vector>
+#include <pthread.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
+#include <arpa/inet.h>
 
 using namespace std;
 
 #define SIZE_1024 1024
-#define MAX_CNCT_TRY 10
+#define BACKLOG 10
 
-void exit_error(string);
+void exit_error(const char*);
 void process_args(char**);
 void get_console(void);
 vector<string> get_tokens(char*, char*);
-void connect_tracker(void);
+void* run_server(void*);
 
-extern int sock_in;
-extern map<int, set<pair<string, string> > > tracker_list;
+extern char* tracker_ip;
+extern int tracker_port;
 
 #endif
