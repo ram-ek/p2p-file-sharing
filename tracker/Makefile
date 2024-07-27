@@ -6,7 +6,7 @@ all: tracker
 %.o: %.h %.cpp
 	$(CC) $(CFLAGS) -c $^
 
-tracker: cmd.o utils.o tracker.cpp
+tracker: cmd.o server.o utils.o tracker.cpp
 	$(CC) $(CFLAGS) -o tracker.out $^
 
 clean:

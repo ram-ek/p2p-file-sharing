@@ -6,6 +6,8 @@
 #include <map>
 #include <set>
 #include <string>
+#include <unistd.h>
+#include <pthread.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
@@ -15,6 +17,7 @@ using namespace std;
 #define SIZE_1024 1024
 #define MAX_RETRY 10
 #define BACKLOG 10
+#define QUIT_CODE "500"
 
 void exit_error(string);
 void process_args(char**);

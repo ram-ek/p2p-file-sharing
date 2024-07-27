@@ -2,6 +2,10 @@
 
 void exit_error(const char* msg) {
     cerr << msg << '\n';
+    
+    if(tracker_sock != 0)
+        close(tracker_sock);
+
     exit(1);
 }
 
@@ -16,7 +20,7 @@ void process_args(char* argv[]) {
     tracker_port = stoi(socket_id[1]);
 
     // todo - store tracker details in tracker_info.txt
-    
+
 }
 
 vector<string> get_tokens(char* s, char* deli) {

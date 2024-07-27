@@ -2,6 +2,10 @@
 
 void exit_error(string msg) {
     cerr << msg << '\n';
+    
+    if(peer_sock != 0)
+        close(peer_sock);
+
     exit(1);
 }
 

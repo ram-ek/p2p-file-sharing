@@ -2,6 +2,7 @@
 
 char* tracker_ip;
 int tracker_port;
+int tracker_sock;
 
 int main(int argc, char* argv[]) {
     if(argc < 2)
