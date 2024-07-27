@@ -39,12 +39,12 @@ void* run_server(void* arg) {
     if(inet_pton(AF_INET, tracker_ip, &addr.sin_addr) <= 0)
         exit_error("Error with tracker ip address.");
 
-    if(bind(sock_in, (struct sockaddr*)&addr, sizeof(addr)) < 0)
+    if(bind(sock_in, (struct sockaddr*)&addr, addrlen) < 0)
         exit_error("Error binding with socket.");
 
     if(listen(sock_in, BACKLOG) < 0)
         exit_error("Error listening to socket.");
-    cerr << tracker_ip << '\n';
+
     while(true) {
         int sock_out;
 
