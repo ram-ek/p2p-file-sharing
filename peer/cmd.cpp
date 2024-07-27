@@ -1,5 +1,13 @@
 #include "headers.h"
 
+bool send_cmd(char* cmd) {
+    // do sanity checks
+    
+
+    if(send(peer_sock, cmd, strlen(cmd), 0) < 0)
+        exit_error("Error sending command.");
+}
+
 void get_console() {
     char inp[SIZE_1024];
 
@@ -12,10 +20,11 @@ void get_console() {
             continue;
 
         // todo - more checks needed
-        if(inp_tok.size() == 1 && inp_tok[0] == "quit")
-            break;
+        // if(inp_tok.size() == 1 && inp_tok[0] == "quit")
+        //     break;
 
         // send commands to server for processing
-        // send_cmd(inp);
+        if(!send_cmd(inp))
+            break;
     }
 }

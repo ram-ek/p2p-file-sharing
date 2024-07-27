@@ -18,11 +18,12 @@ using namespace std;
 
 void exit_error(string);
 void process_args(char**);
-void get_console(void);
 vector<string> get_tokens(char*, char*);
+void* run_server(void*);
 void connect_tracker(void);
+void get_console(void);
 
-extern int sock_in;
+extern int peer_sock;
 extern char* peer_ip;
 extern int peer_port;
 extern map<int, set<pair<const char*, int> > > tracker_list;

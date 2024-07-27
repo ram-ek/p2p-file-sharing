@@ -6,7 +6,7 @@ all: peer
 %.o: %.h %.cpp
 	$(CC) $(CFLAGS) -c $^
 
-peer: cmd.o utils.o peer.cpp
+peer: cmd.o server.o utils.o peer.cpp
 	$(CC) $(CFLAGS) -o peer.out $^
 
 clean:

@@ -16,9 +16,9 @@ using namespace std;
 
 void exit_error(const char*);
 void process_args(char**);
-void get_console(void);
-vector<string> get_tokens(char*, char*);
 void* run_server(void*);
+vector<string> get_tokens(char*, char*);
+void get_console(void);
 
 extern char* tracker_ip;
 extern int tracker_port;

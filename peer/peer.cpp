@@ -1,6 +1,9 @@
 #include "headers.h"
 
 int sock_in;
+int peer_sock;
+char* peer_ip;
+int peer_port;
 map<int, set<pair<const char*, int> > > tracker_list;
 
 int main(int argc, char* argv[]) {
@@ -11,9 +14,9 @@ int main(int argc, char* argv[]) {
     process_args(argv);
 
     // run server
-    // pthread_t server_thread;
-    // if(pthread_create(&server_thread, NULL, run_server, NULL) != 0)
-    //     exit_error("Error creating server thread.");
+    pthread_t server_thread;
+    if(pthread_create(&server_thread, NULL, run_server, NULL) != 0)
+        exit_error("Error creating server thread.");
 
     // connect to tracker
     connect_tracker();
