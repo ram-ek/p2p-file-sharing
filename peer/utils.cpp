@@ -1,19 +1,10 @@
 #include "headers.h"
 
-void exit_error(string msg) {
-    cerr << msg << '\n';
-    
-    if(peer_sock != 0)
-        close(peer_sock);
-
-    exit(1);
-}
-
 void process_args(char* argv[]) {
     // set up peer ip and port
     vector<string> peer_socket_id = get_tokens(argv[1], ":");
     if(peer_socket_id.size() != 2)
-        exit_error("Invalid socket id provided.");
+        panic("Invalid socket id provided.");
 
     peer_ip = new char[peer_socket_id[0].size() + 1];
     strcpy(peer_ip, peer_socket_id[0].c_str());
@@ -38,7 +29,7 @@ vector<string> get_tokens(char* s, char* deli) {
 void connect_tracker() {
     // make socket
     if((peer_sock = socket(AF_INET, SOCK_STREAM, 0)) < 0)
-        exit_error("Error creating socket.");
+        panic("Error creating socket.");
 
     struct sockaddr_in addr;
 
@@ -51,7 +42,7 @@ void connect_tracker() {
         for(auto& [host_cnt, tracker_addrs]: tracker_list) {
             for(auto& [tracker_addr, tracker_port]: tracker_addrs) {
                 if(inet_pton(AF_INET, tracker_addr, &addr.sin_addr) <= 0)
-                    exit_error("Invalid IP address.");
+                    panic("Invalid IP address.");
                 
                 addr.sin_port = htons(tracker_port);
 
@@ -65,5 +56,5 @@ void connect_tracker() {
         }
     }
 
-    exit_error("Unable to connect to tracker.");
+    panic("Unable to connect to tracker.");
 }

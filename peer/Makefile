@@ -1,13 +1,13 @@
 CC=g++
 CFLAGS=-Wall -std=c++20
 
-all: peer
+all: main
 
 %.o: %.h %.cpp
 	$(CC) $(CFLAGS) -c $^
 
-peer: cmd.o server.o utils.o peer.cpp
-	$(CC) $(CFLAGS) -o peer.out $^
+main: console.o server.o utils.o main.cpp
+	$(CC) $(CFLAGS) -o main.out $^
 
 clean:
-	rm -rf *.o peer.out
+	rm -rf *.o main.out

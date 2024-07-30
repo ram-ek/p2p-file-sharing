@@ -1,13 +1,13 @@
 CC=g++
 CFLAGS=-Wall -std=c++20
 
-all: tracker
+all: main
 
 %.o: %.h %.cpp
 	$(CC) $(CFLAGS) -c $^
 
-tracker: cmd.o server.o utils.o tracker.cpp
-	$(CC) $(CFLAGS) -o tracker.out $^
+main: console.o commands.o cmdcall.o server.o utils.o main.cpp
+	$(CC) $(CFLAGS) -o main.out $^
 
 clean:
-	rm -rf *.o tracker.out
+	rm -rf *.o main.out

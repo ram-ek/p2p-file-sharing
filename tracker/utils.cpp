@@ -1,19 +1,10 @@
 #include "headers.h"
 
-void exit_error(const char* msg) {
-    cerr << msg << '\n';
-    
-    if(tracker_sock != 0)
-        close(tracker_sock);
-
-    exit(1);
-}
-
 void process_args(char* argv[]) {
     vector<string> socket_id = get_tokens(argv[1], ":");
     
     if(socket_id.size() != 2)
-        exit_error("Invalid socket id provided.");
+        panic("Invalid socket id provided.");
 
     tracker_ip = new char[socket_id[0].size() + 1];
     strcpy(tracker_ip, socket_id[0].c_str());

@@ -1,8 +1,13 @@
-# AOS Assignment 4
-## Overview
-- Create a distributed file sharing system.
+# Overview
+- A Peer-to-Peer file sharing system for peers to share file among themselves.
+- Hybrid architecture is used where few trackers are responsible for handling the peer requests and enabling them to share files among themselves.
+- Files are shared among peers where chunks of a single file are fetched from multiple peers simultaneously to speed up the process.
+- This reduces the load on a single server for downloading files and enables higher speed transfers by downloading file from multiple peers.
 
-## Execution
+# Architecture
+- 
+
+# Execution
 1. Create user
 ```
 create_user <username> <password>
@@ -73,7 +78,7 @@ show_downloads
 stop_share <group_id> <filename>
 ```
 
-## Working
+# Working
 1. User should create an account and register with tracker.
 2. Login using the user credentials.
 3. Tracker maintains information of clients with their files(shared by client) to assist the clients for the communication between peers.

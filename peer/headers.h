@@ -19,13 +19,15 @@ using namespace std;
 #define BACKLOG 10
 #define QUIT_CODE "500"
 
-void exit_error(string);
+void console_write(const char*);
+void panic(const char*);
 void process_args(char**);
 vector<string> get_tokens(char*, char*);
 void* run_server(void*);
 void connect_tracker(void);
 void get_console(void);
 
+extern pthread_mutex_t console_mtx;
 extern int peer_sock;
 extern char* peer_ip;
 extern int peer_port;
