@@ -3,10 +3,10 @@ CFLAGS=-Wall -std=c++20
 
 all: main
 
-%.o: %.h %.cpp
+%.o: %.cpp
 	$(CC) $(CFLAGS) -c $^
 
-main: console.o server.o utils.o main.cpp
+main: console.o create_user.o login.o logout.o commands.o cmdcall.o server.o utils.o main.cpp
 	$(CC) $(CFLAGS) -o main.out $^
 
 clean:

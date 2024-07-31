@@ -17,16 +17,18 @@ using namespace std;
 #define SIZE_1024 1024
 #define MAX_RETRY 10
 #define BACKLOG 10
-#define QUIT_CODE "500"
 
 void console_write(const char*);
 void panic(const char*);
 void process_args(char**);
+extern string peek(char*, char*);
 vector<string> get_tokens(char*, char*);
 void* run_server(void*);
 void connect_tracker(void);
+int processcmd(char*);
 void get_console(void);
 
+extern char* user;
 extern pthread_mutex_t console_mtx;
 extern int peer_sock;
 extern char* peer_ip;

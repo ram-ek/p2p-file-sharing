@@ -14,6 +14,15 @@ void process_args(char* argv[]) {
     tracker_list[0].insert(make_pair("127.0.0.1", 7000));
 }
 
+string peek(char* s, char* deli) {
+    string str = "";
+
+    for(int i=0; i<strlen(s) && s[i] != *deli; i++)
+        str += s[i];
+
+    return str;
+}
+
 vector<string> get_tokens(char* s, char* deli) {
     char *tok = strtok(s, deli);
     vector<string> tokens;

@@ -1,5 +1,6 @@
 #include "headers.h"
 
+char* user;
 pthread_mutex_t console_mtx = PTHREAD_MUTEX_INITIALIZER;
 int sock_in;
 int peer_sock;
@@ -26,6 +27,7 @@ int main(int argc, char* argv[]) {
     get_console();
 
     // todo - doing graceful termination
+    close(peer_sock);
 
     return 0;
 }

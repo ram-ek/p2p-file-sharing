@@ -65,12 +65,12 @@ int cmdcall() {
         cmd.cmd_num = INVALID;
         cmd.msg = "Argument number mismatch, expected " + to_string(cmd.argc) + " got " + to_string(cmd.argv.size());
     }
-
+    
     return cmdcalls[cmd.cmd_num](&cmd);
 }
 
-int processcmd(char* inp, int* sock_out) {
-    vector<string> cmd_tokens = get_tokens(inp, " ");
+int processcmd(char* cmd_line, int* sock_out) {
+    vector<string> cmd_tokens = get_tokens(cmd_line, " ");
 
     cmd.sock_out = *sock_out;
     if(cmdcallmap.find(cmd_tokens[0]) == cmdcallmap.end()) {

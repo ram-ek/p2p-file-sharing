@@ -7,7 +7,7 @@ void console_write(const char* msg) {
 }
 
 void panic(const char* msg) {
-    console_write(msg + '\n');
+    console_write(msg);
     
     if(tracker_sock != 0)
         close(tracker_sock);
@@ -16,11 +16,11 @@ void panic(const char* msg) {
 }
 
 void get_console() {
-    char inp[SIZE_1024];
+    char inp[SIZE_10240];
 
     while(true) {
         console_write(">> ");
-        cin.getline(inp, SIZE_1024);
+        cin.getline(inp, SIZE_10240);
 
         vector<string> inp_tok = get_tokens(inp, " ");
         if(inp_tok.size() == 0)

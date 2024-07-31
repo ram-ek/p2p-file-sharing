@@ -14,6 +14,15 @@ void process_args(char* argv[]) {
 
 }
 
+// char* peek(char* s) {
+//     string str = "";
+
+//     for(int i=0; i<strlen(s) && s[i] != ' '; i++)
+//         str += s[i];
+
+//     return str.c_str();
+// }
+
 vector<string> get_tokens(char* s, char* deli) {
     char *tok = strtok(s, deli);
     vector<string> tokens;

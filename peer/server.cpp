@@ -22,7 +22,7 @@ void* run_server(void* arg) {
     if(inet_pton(AF_INET, peer_ip, &addr.sin_addr) <= 0)
         panic("Error with tracker ip address.");
 
-    if(bind(sock_in, (struct sockaddr*)&addr, sizeof(addr)) < 0)
+    if(bind(sock_in, (const struct sockaddr*)&addr, addrlen) < 0)
         panic("Error binding with socket.");
 
     if(listen(sock_in, BACKLOG) < 0)
