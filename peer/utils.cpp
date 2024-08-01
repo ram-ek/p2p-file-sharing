@@ -14,13 +14,23 @@ void process_args(char* argv[]) {
     tracker_list[0].insert(make_pair("127.0.0.1", 7000));
 }
 
-string peek(char* s, char* deli) {
-    string str = "";
+void peek(char* ps, char* tok, char* deli) {
+    char* s;
+    char* es = ps + strlen(ps);
 
-    for(int i=0; i<strlen(s) && s[i] != *deli; i++)
-        str += s[i];
-
-    return str;
+    s = ps;
+    while(s < es && strchr(deli, *s))
+        s++;
+    
+    char* ts = strpbrk(s, deli);
+    if(!ts) {
+        strncpy(tok, s, (es-s));
+        tok[(es-s)] = '\0';
+        return;
+    }
+    
+    strncpy(tok, s, (ts-s));
+    tok[(ts-s)] = '\0';
 }
 
 vector<string> get_tokens(char* s, char* deli) {
@@ -38,7 +48,7 @@ vector<string> get_tokens(char* s, char* deli) {
 void connect_tracker() {
     // make socket
     if((peer_sock = socket(AF_INET, SOCK_STREAM, 0)) < 0)
-        panic("Error creating socket.");
+        panic("Error creating socket.\n");
 
     struct sockaddr_in addr;
 
@@ -51,7 +61,7 @@ void connect_tracker() {
         for(auto& [host_cnt, tracker_addrs]: tracker_list) {
             for(auto& [tracker_addr, tracker_port]: tracker_addrs) {
                 if(inet_pton(AF_INET, tracker_addr, &addr.sin_addr) <= 0)
-                    panic("Invalid IP address.");
+                    panic("Invalid IP address.\n");
                 
                 addr.sin_port = htons(tracker_port);
 
@@ -65,5 +75,5 @@ void connect_tracker() {
         }
     }
 
-    panic("Unable to connect to tracker.");
+    panic("Unable to connect to tracker.\n");
 }

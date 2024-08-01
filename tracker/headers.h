@@ -13,8 +13,9 @@
 
 using namespace std;
 
-#define SIZE_10240 10240
+#define SIZE_1024 1024
 #define BACKLOG 10
+#define WHITESPACE " \t\r\n\v"
 
 void console_write(const char*);
 void panic(const char*);

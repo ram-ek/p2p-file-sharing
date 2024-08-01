@@ -16,11 +16,12 @@ void panic(const char* msg) {
 }
 
 void get_console() {
-    char inp[SIZE_10240];
+    char inp[SIZE_1024];
 
     while(true) {
+        bzero(inp, SIZE_1024);
         console_write(">> ");
-        cin.getline(inp, SIZE_10240);
+        cin.getline(inp, SIZE_1024);
 
         vector<string> inp_tok = get_tokens(inp, " ");
         if(inp_tok.size() == 0)

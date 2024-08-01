@@ -4,16 +4,18 @@ void* handle_client(void* arg) {
     int* sock_out = (int*) arg;
     // console_write(("Connected to socket " + to_string(*sock_out) + '\n').c_str());
     // console_write(">> ");
-
-    char cmd[SIZE_10240];
+    char cmd[SIZE_1024];
     
     while(true) {
-        bzero(cmd, SIZE_10240);
-        if(recv(*sock_out, cmd, SIZE_10240-1, 0) < 0)
+        cout << "in\n";
+        bzero(cmd, SIZE_1024);
+        
+        if(recv(*sock_out, cmd, SIZE_1024, 0) < 0)
             panic("Error receiving command from peer.\n");
-
+        cout << *sock_out << " cmd " << cmd << "*" << '\n';
         if(processcmd(cmd, sock_out))
             break;
+        cout << "out\n";
     }
 
     // console_write(("Disconnected to socket " + to_string(*sock_out) + '\n').c_str());

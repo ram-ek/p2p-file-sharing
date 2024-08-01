@@ -39,11 +39,12 @@ static int (*cmdcalls[])(char* cmd) = {
     [QUIT]              quit,
 };
 
-int processcmd(char* cmd) {
+int process_cmd(char* cmd) {
     // get command type
-    const char* cmd_type = peek(cmd, " ").c_str();
-    
-    if(!cmd_type)
+    char cmd_type[10];
+    peek(cmd, cmd_type, WHITESPACE);
+
+    if(strcmp(cmd_type, "") == 0)
         return 0;
 
     // call for invalid command

@@ -20,11 +20,15 @@ void get_console() {
     char inp[SIZE_1024];
 
     while(true) {
+        bzero(inp, SIZE_1024);
         console_write(">> ");
         cin.getline(inp, SIZE_1024);
+        
+        if(strlen(inp) == 0)
+            continue;
 
         // send commands to server for processing
-        if(processcmd(inp))
+        if(process_cmd(inp))
             break;
     }
 }

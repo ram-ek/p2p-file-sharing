@@ -17,15 +17,16 @@ using namespace std;
 #define SIZE_1024 1024
 #define MAX_RETRY 10
 #define BACKLOG 10
+#define WHITESPACE " \t\r\n\v"
 
 void console_write(const char*);
 void panic(const char*);
 void process_args(char**);
-extern string peek(char*, char*);
+extern void peek(char*, char*, char*);
 vector<string> get_tokens(char*, char*);
 void* run_server(void*);
 void connect_tracker(void);
-int processcmd(char*);
+int process_cmd(char*);
 void get_console(void);
 
 extern char* user;

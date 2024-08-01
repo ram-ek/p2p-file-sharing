@@ -14,14 +14,24 @@ void process_args(char* argv[]) {
 
 }
 
-// char* peek(char* s) {
-//     string str = "";
+void peek(char* ps, char* tok, char* deli) {
+    char* s;
+    char* es = ps + strlen(ps);
 
-//     for(int i=0; i<strlen(s) && s[i] != ' '; i++)
-//         str += s[i];
-
-//     return str.c_str();
-// }
+    s = ps;
+    while(s < es && strchr(deli, *s))
+        s++;
+    
+    char* ts = strpbrk(s, deli);
+    if(!ts) {
+        strncpy(tok, s, (es-s));
+        tok[(es-s)] = '\0';
+        return;
+    }
+    
+    strncpy(tok, s, (ts-s));
+    tok[(ts-s)] = '\0';
+}
 
 vector<string> get_tokens(char* s, char* deli) {
     char *tok = strtok(s, deli);

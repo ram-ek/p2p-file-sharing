@@ -43,7 +43,7 @@ int create_user(char* cmd) {
         return 0;
     }
 
-    char* payload = strtok(NULL, " ");
+    char* payload = strtok(NULL, "");
     if(!payload) {
         console_write("Unexpected response from tracker. No payload found.\n");
         return 0;
