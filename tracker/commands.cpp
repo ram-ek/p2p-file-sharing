@@ -2,13 +2,6 @@
 #include "cmdcall.h"
 
 int create_user(struct command* cmd) {
-    // if(cmd->argc != cmd->argv.size()) {
-    //     if(send(cmd->sock_out, "422 Invalid command format.\n", SIZE_1024, 0) < 0)
-    //         panic("Error sending response to peer.\n");
-
-    //     return 0;
-    // }
-
     string username = cmd->argv[0], password = cmd->argv[1];
     if(user_list.find(username) != user_list.end()) {
         if(send(cmd->sock_out, "409 User already exists.\n", SIZE_1024, 0) < 0)
@@ -25,13 +18,6 @@ int create_user(struct command* cmd) {
 }
 
 int login(struct command* cmd) {
-    // if(cmd->argc != cmd->argv.size()) {
-    //     if(send(cmd->sock_out, "422 Invalid command format.\n", SIZE_1024, 0) < 0)
-    //         panic("Error sending response to peer.\n");
-
-    //     return 0;
-    // }
-
     string username = cmd->argv[0], password = cmd->argv[1];
     if(user_list.find(username) == user_list.end()) {
         if(send(cmd->sock_out, "404 No user exists.\n", SIZE_1024, 0) < 0)
@@ -56,8 +42,15 @@ int login(struct command* cmd) {
 }
 
 int create_group(struct command* cmd) {
-    if(port_to_user[cmd->sock_out] == NO_USER) {
+    if(get_user_from_port(cmd->sock_out) == NO_USER) {
         if(send(cmd->sock_out, "401 You need to be logged in to execute this command.\n", SIZE_1024, 0) < 0)
+            panic("Error sending response to peer.\n");
+
+        return 0;
+    }
+
+    if(group_list.find(cmd->argv[0]) != group_list.end()) {
+        if(send(cmd->sock_out, "409 Group with same name already exists.\n", SIZE_1024, 0) < 0)
             panic("Error sending response to peer.\n");
 
         return 0;
@@ -65,7 +58,7 @@ int create_group(struct command* cmd) {
 
     struct group* g = new group();
     g->group_name = cmd->argv[0];
-    g->group_owner = port_to_user[cmd->sock_out];
+    g->group_owner = get_user_from_port(cmd->sock_out);
     g->group_members.insert(g->group_owner);
     group_list[g->group_name] = g;
 
@@ -76,7 +69,40 @@ int create_group(struct command* cmd) {
 }
 
 int join_group(struct command* cmd) {
+    if(port_to_user[cmd->sock_out] == NO_USER) {
+        if(send(cmd->sock_out, "401 You need to be logged in to execute this command.\n", SIZE_1024, 0) < 0)
+            panic("Error sending response to peer.\n");
 
+        return 0;
+    }
+
+    string group_name = cmd->argv[0];
+    if(group_list.find(group_name) == group_list.end()) {
+        if(send(cmd->sock_out, "404 No group found.\n", SIZE_1024, 0) < 0)
+            panic("Error sending response to peer.\n");
+
+        return 0;
+    }
+
+    if(group_list[group_name]->group_members.find(get_user_from_port(cmd->sock_out)) != group_list[group_name]->group_members.end()) {
+        if(send(cmd->sock_out, "409 You are already a member of this group.\n", SIZE_1024, 0) < 0)
+            panic("Error sending response to peer.\n");
+
+        return 0;
+    }
+
+    if(group_list[group_name]->request_list.find(get_user_from_port(cmd->sock_out)) != group_list[group_name]->request_list.end()) {
+        if(send(cmd->sock_out, "409 You have already requested to join this group.\n", SIZE_1024, 0) < 0)
+            panic("Error sending response to peer.\n");
+
+        return 0;
+    }
+
+    group_list[group_name]->request_list.insert(get_user_from_port(cmd->sock_out));
+    if(send(cmd->sock_out, "200 Request to join group sent.\n", SIZE_1024, 0) < 0)
+        panic("Error sending response to peer.\n");
+
+    return 0;
 }
 
 int leave_group(struct command* cmd) {

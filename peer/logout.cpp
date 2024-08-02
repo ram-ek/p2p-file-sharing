@@ -1,11 +1,6 @@
 #include "headers.h"
 #include "cmd_defs.h"
 
-static map<string, int> logout_response = {
-    { STATUS_OK_CODE,       STATUS_OK },
-    { INVALID_FORMAT_CODE,  INVALID_FORMAT }
-};
-
 static int status_ok(char* payload) {
     user = NULL;
     console_write(payload);
@@ -17,9 +12,9 @@ static int invalid_format(char* payload) {
     return 0;
 }
 
-static int (*response_handler[])(char* payload) = {
-    [STATUS_OK]         =status_ok,
-    [INVALID_FORMAT]    =invalid_format
+static map<string, int(*)(char*)> response_handler = {
+    { STATUS_OK_CODE,       status_ok },
+    { INVALID_FORMAT_CODE,  invalid_format }
 };
 
 /*
@@ -53,10 +48,10 @@ int logout(char* cmd) {
         return 0;
     }
     
-    if(logout_response.find(response_code) == logout_response.end()) {
+    if(response_handler.find(response_code) == response_handler.end()) {
         console_write("Unexpected response code from tracker.\n");
         return 0;
     }
 
-    return response_handler[logout_response[response_code]](payload);
+    return response_handler[response_code](payload);
 }

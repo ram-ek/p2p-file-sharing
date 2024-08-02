@@ -1,12 +1,6 @@
 #include "headers.h"
 #include "cmd_defs.h"
 
-static map<string, int> responses = {
-    { STATUS_OK_CODE,       STATUS_OK },
-    { INVALID_FORMAT_CODE,  INVALID_FORMAT },
-    { UNAUTHORIZED_CODE,    UNAUTHORIZED }
-};
-
 static int status_ok(char* payload) {
     console_write(payload);
     return 0;
@@ -17,21 +11,27 @@ static int invalid_format(char* payload) {
     return 0;
 }
 
+static int group_exists(char* payload) {
+    console_write(payload);
+    return 0;
+}
+
 static int unauthorized(char* payload) {
     console_write(payload);
     return 0;
 }
 
-static int (*response_handler[])(char* payload) = {
-    [STATUS_OK]         =status_ok,
-    [INVALID_FORMAT]    =invalid_format,
-    [UNAUTHORIZED]      =unauthorized
+static map<string, int(*)(char*)> response_handler = {
+    { STATUS_OK_CODE,       status_ok },
+    { INVALID_FORMAT_CODE,  invalid_format },
+    { CONFLICT_CODE,        group_exists },
+    { UNAUTHORIZED_CODE,    unauthorized }
 };
 
 /*
     Sends create group request to tracker in format create_group <group_id>
     Expects response from tracker as STATUS_CODE RESP
-    Handles STATUS_CODE as 200(STATUS_OK), 401(UNAUTHORIZED)
+    Handles STATUS_CODE as 200(STATUS_OK), 422(INVALID_FORMAT), 401(UNAUTHORIZED)
 */
 int create_group(char* cmd) {
     if(send(peer_sock, cmd, SIZE_1024, 0) < 0)
@@ -54,11 +54,11 @@ int create_group(char* cmd) {
         console_write("Unexpected response from tracker. No payload found.\n");
         return 0;
     }
-    
-    if(responses.find(response_code) == responses.end()) {
+
+    if(response_handler.find(response_code) == response_handler.end()) {
         console_write("Unexpected response code from tracker.\n");
         return 0;
     }
 
-    return response_handler[responses[response_code]](payload);
+    return response_handler[response_code](payload);
 }

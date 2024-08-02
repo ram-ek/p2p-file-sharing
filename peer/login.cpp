@@ -1,12 +1,6 @@
 #include "headers.h"
 #include "cmd_defs.h"
 
-static map<string, int> responses = {
-    { STATUS_OK_CODE,       STATUS_OK },
-    { NO_USER_FOUND_CODE,   NO_USER_FOUND },
-    { UNAUTHORIZED_CODE,    UNAUTHORIZED }
-};
-
 static int status_ok(char* payload) {
     user = payload;
     console_write("User logged in successfully.\n");
@@ -23,16 +17,16 @@ static int unauthorized(char* payload) {
     return 0;
 }
 
-static int (*response_handler[])(char* payload) = {
-    [STATUS_OK]         =status_ok,
-    [NO_USER_FOUND]     =no_user_found,
-    [UNAUTHORIZED]      =unauthorized
+static map<string, int(*)(char*)> response_handler = {
+    { STATUS_OK_CODE,       status_ok },
+    { NOT_FOUND_CODE,       no_user_found },
+    { UNAUTHORIZED_CODE,    unauthorized }
 };
 
 /*
     Sends login request to tracker in format login <username> <password>
     Expects response from tracker as STATUS_CODE RESP
-    Handles STATUS_CODE as 200(STATUS_OK), 422(INVALID_FORMAT), 404(NO_USER), 401(UNAUTHORIZED)
+    Handles STATUS_CODE as 200(STATUS_OK), 422(INVALID_FORMAT), 404(NO_USER_FOUND), 401(UNAUTHORIZED)
 */
 int login(char* cmd) {
     if(user) {
@@ -60,10 +54,10 @@ int login(char* cmd) {
         return 0;
     }
     
-    if(responses.find(response_code) == responses.end()) {
+    if(response_handler.find(response_code) == response_handler.end()) {
         console_write("Unexpected response code from tracker.\n");
         return 0;
     }
 
-    return response_handler[responses[response_code]](payload);
+    return response_handler[response_code](payload);
 }

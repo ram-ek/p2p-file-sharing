@@ -23,6 +23,7 @@ struct group {
     string group_name;
     string group_owner;
     set<string> group_members;
+    set<string> request_list;
 };
 
 void console_write(const char*);
