@@ -2,26 +2,31 @@
 #include "cmdcall.h"
 
 int create_user(struct command* cmd) {
+    cout << "create_user\n";
     if(cmd->argc != cmd->argv.size()) {
         if(send(cmd->sock_out, "422 Invalid command format.\n", SIZE_1024, 0) < 0)
             panic("Error sending response to peer.\n");
+
+        return 0;
     }
 
     string username = cmd->argv[0], password = cmd->argv[1];
     if(user_list.find(username) != user_list.end()) {
         if(send(cmd->sock_out, "409 User already exists.\n", SIZE_1024, 0) < 0)
-            panic("Error sending response to peer.");
+            panic("Error sending response to peer.\n");
+
+        return 0;
     }
 
     user_list[username] = password;
     if(send(cmd->sock_out, "200 User created successfully.\n", SIZE_1024, 0) < 0)
-        panic("Error sending response to peer.");
-
+        panic("Error sending response to peer.\n");
+    
     return 0;
 }
 
 int login(struct command* cmd) {
-    if(send(cmd->sock_out, "200 ramek", SIZE_1024, 0) < 0)
+    if(send(cmd->sock_out, "404 No user found. Please create user first.\n", SIZE_1024, 0) < 0)
         panic("Error sending response to peer.\n");
 
     return 0;
@@ -76,7 +81,10 @@ int stop_share(struct command* cmd) {
 }
 
 int invalid(struct command* cmd) {
+    if(send(cmd->sock_out, "011 Invalid command format.\n", SIZE_1024, 0) < 0)
+        panic("Error sending response to peer.");
 
+    return 0;
 }
 
 int quit(struct command* cmd) {

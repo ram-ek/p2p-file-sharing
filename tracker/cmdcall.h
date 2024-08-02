@@ -7,7 +7,6 @@ struct command {
     vector<string> argv;
     string msg;
 };
-extern struct command cmd;
 
 #define CREATE_USER         1
 #define LOGIN               2

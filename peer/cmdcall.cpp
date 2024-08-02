@@ -17,33 +17,33 @@ map<string, int> cmdcallmap = {
     {"show_downloads",  13},
     {"stop_share",      14},
     {"invalid",         15},
-    {"quit",            16},
+    {"quit",            16}
 };
 
 static int (*cmdcalls[])(char* cmd) = {
-    [CREATE_USER]       create_user,
-    [LOGIN]             login,
-    [CREATE_GROUP]      create_group,
-    [JOIN_GROUP]        join_group,
-    [LEAVE_GROUP]       leave_group,
-    [LIST_REQUEST]      list_request,
-    [ACCEPT_REQUEST]    accept_request,
-    [LIST_GROUPS]       list_groups,
-    [LIST_FILES]        list_files,
-    [UPLOAD_FILE]       upload_file,
-    [DOWNLOAD_FILE]     download_file,
-    [LOGOUT]            logout,
-    [SHOW_DOWNLOADS]    show_downloads,
-    [STOP_SHARE]        stop_share,
-    [INVALID]           invalid,
-    [QUIT]              quit,
+    [CREATE_USER]       =create_user,
+    [LOGIN]             =login,
+    [CREATE_GROUP]      =create_group,
+    [JOIN_GROUP]        =join_group,
+    [LEAVE_GROUP]       =leave_group,
+    [LIST_REQUEST]      =list_request,
+    [ACCEPT_REQUEST]    =accept_request,
+    [LIST_GROUPS]       =list_groups,
+    [LIST_FILES]        =list_files,
+    [UPLOAD_FILE]       =upload_file,
+    [DOWNLOAD_FILE]     =download_file,
+    [LOGOUT]            =logout,
+    [SHOW_DOWNLOADS]    =show_downloads,
+    [STOP_SHARE]        =stop_share,
+    [INVALID]           =invalid,
+    [QUIT]              =quit
 };
 
 int process_cmd(char* cmd) {
     // get command type
-    char cmd_type[10];
+    char cmd_type[20]; // greater than max command length
     peek(cmd, cmd_type, WHITESPACE);
-
+    
     if(strcmp(cmd_type, "") == 0)
         return 0;
 

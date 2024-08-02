@@ -14,25 +14,25 @@ void* run_server(void* arg) {
     socklen_t addrlen = sizeof(addr);
 
     if((sock_in = socket(AF_INET, SOCK_STREAM, 0)) < 0)
-        panic("Error making socket for server.");
+        panic("Error making socket for server.\n");
 
     addr.sin_family = AF_INET;
     addr.sin_port = htons(peer_port);
 
     if(inet_pton(AF_INET, peer_ip, &addr.sin_addr) <= 0)
-        panic("Error with tracker ip address.");
+        panic("Error with tracker ip address.\n");
 
     if(bind(sock_in, (const struct sockaddr*)&addr, addrlen) < 0)
         panic("Error binding with socket.");
 
     if(listen(sock_in, BACKLOG) < 0)
-        panic("Error listening to socket.");
+        panic("Error listening to socket.\n");
     
     while(true) {
         int sock_out;
 
         if((sock_out = accept(sock_in, (struct sockaddr*)&addr, &addrlen)) < 0)
-            panic("Error accepting client connection.");
+            panic("Error accepting client connection.\n");
 
         // dispatch thread to handle client
         pthread_t client_thread;
