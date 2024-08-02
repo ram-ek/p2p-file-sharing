@@ -5,6 +5,8 @@ char* tracker_ip;
 int tracker_port;
 int tracker_sock;
 map<string, string> user_list;
+map<int, string> port_to_user;
+map<string, struct group*> group_list;
 
 int main(int argc, char* argv[]) {
     if(argc < 2)

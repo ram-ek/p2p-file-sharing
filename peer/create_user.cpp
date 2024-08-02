@@ -1,10 +1,10 @@
 #include "headers.h"
 #include "cmd_defs.h"
 
-static map<string, int> create_user_response = {
-    { STATUS_OK_CODE,       0 },
-    { INVALID_FORMAT_CODE,  1 },
-    { USER_EXIST_CODE,      2 }
+static map<string, int> responses = {
+    { STATUS_OK_CODE,       STATUS_OK },
+    { INVALID_FORMAT_CODE,  INVALID_FORMAT },
+    { USER_EXIST_CODE,      USER_EXIST }
 };
 
 static int status_ok(char* payload) {
@@ -54,10 +54,10 @@ int create_user(char* cmd) {
         return 0;
     }
 
-    if(create_user_response.find(response_code) == create_user_response.end()) {
+    if(responses.find(response_code) == responses.end()) {
         console_write("Unexpected response code from tracker.\n");
         return 0;
     }
 
-    return response_handler[create_user_response[response_code]](payload);
+    return response_handler[responses[response_code]](payload);
 }

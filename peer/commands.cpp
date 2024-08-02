@@ -1,10 +1,6 @@
 #include "headers.h"
 #include "cmdcall.h"
 
-int create_group(char* cmd) {
-    return 0;
-}
-
 int join_group(char* cmd) {
     return 0;
 }

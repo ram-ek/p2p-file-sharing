@@ -6,7 +6,7 @@ all: main
 %.o: %.cpp
 	$(CC) $(CFLAGS) -c $^
 
-main: console.o create_user.o login.o logout.o commands.o cmdcall.o server.o utils.o main.cpp
+main: console.o create_user.o login.o create_group.o logout.o commands.o cmdcall.o server.o utils.o main.cpp
 	$(CC) $(CFLAGS) -o main.out $^
 
 clean:

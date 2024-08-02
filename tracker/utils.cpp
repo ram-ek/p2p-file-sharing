@@ -44,3 +44,15 @@ vector<string> get_tokens(char* s, char* deli) {
 
     return tokens;
 }
+
+void bind_user_to_port(int port, string user) {
+    port_to_user[port] = user;
+}
+
+string get_user_from_port(int port) {
+    return port_to_user[port];
+}
+
+void remove_port_bind(int port) {
+    port_to_user.erase(port);
+}

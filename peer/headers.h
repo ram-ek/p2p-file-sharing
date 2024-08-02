@@ -22,7 +22,7 @@ using namespace std;
 void console_write(const char*);
 void panic(const char*);
 void process_args(char**);
-extern void peek(char*, char*, char*);
+void peek(char*, char*, char*);
 vector<string> get_tokens(char*, char*);
 void* run_server(void*);
 void connect_tracker(void);

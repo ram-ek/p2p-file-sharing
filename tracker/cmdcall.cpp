@@ -67,7 +67,7 @@ int cmdcall(struct command* cmd) {
     return cmdcalls[cmd->cmd_num](cmd);
 }
 
-int processcmd(char* cmd_line, int* sock_out) {
+int process_cmd(char* cmd_line, int* sock_out) {
     struct command cmd;
     vector<string> cmd_tokens = get_tokens(cmd_line, WHITESPACE);
 

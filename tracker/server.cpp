@@ -7,15 +7,13 @@ void* handle_client(void* arg) {
     char cmd[SIZE_1024];
     
     while(true) {
-        cout << "in\n";
         bzero(cmd, SIZE_1024);
         
         if(recv(*sock_out, cmd, SIZE_1024, 0) < 0)
             panic("Error receiving command from peer.\n");
-        cout << *sock_out << " cmd " << cmd << "*" << '\n';
-        if(processcmd(cmd, sock_out))
+        
+        if(process_cmd(cmd, sock_out))
             break;
-        cout << "out\n";
     }
 
     // console_write(("Disconnected to socket " + to_string(*sock_out) + '\n').c_str());
@@ -49,6 +47,8 @@ void* run_server(void* arg) {
 
         if((sock_out = accept(tracker_sock, (struct sockaddr*)&addr, &addrlen)) < 0)
             panic("Error accepting client connection.\n");
+        
+        bind_user_to_port(sock_out, NO_USER);
         
         // dispatch thread to handle client
         pthread_t client_thread;

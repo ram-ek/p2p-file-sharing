@@ -1,13 +1,5 @@
 #include "headers.h"
 
-struct command {
-    int sock_out;
-    int cmd_num;
-    int argc;
-    vector<string> argv;
-    string msg;
-};
-
 #define CREATE_USER         1
 #define LOGIN               2
 #define CREATE_GROUP        3
@@ -24,6 +16,14 @@ struct command {
 #define STOP_SHARE          14
 #define INVALID             15
 #define QUIT                16
+
+struct command {
+    int sock_out;
+    int cmd_num;
+    int argc;
+    vector<string> argv;
+    string msg;
+};
 
 extern int create_user(struct command* cmd);
 extern int login(struct command* cmd);
