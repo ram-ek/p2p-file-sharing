@@ -9,7 +9,7 @@ static map<string, int> login_response = {
 
 static int status_ok(char* payload) {
     user = payload;
-    console_write(payload);
+    console_write("User logged in successfully.\n");
     return 0;
 }
 
