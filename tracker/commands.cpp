@@ -268,7 +268,29 @@ int reject_request(struct command* cmd) {
 }
 
 int list_groups(struct command* cmd) {
+    string user = get_user_from_port(cmd->sock_out);
+    if(user == NO_USER) {
+        if(send(cmd->sock_out, "401 You need to be logged in to execute this command.\n", SIZE_1024, 0) < 0)
+            panic("Error sending response to peer.\n");
 
+        return 0;
+    }
+
+    if(group_list.size() == 0) {
+        if(send(cmd->sock_out, "200 No groups present.\n", SIZE_1024, 0) < 0)
+            panic("Error sending response to peer.\n");
+
+        return 0;
+    }
+
+    string resp = "";
+    for(auto& [group_name, group]: group_list)
+        resp += group_name + '\n';
+
+    if(send(cmd->sock_out, ("200 "+resp).c_str(), SIZE_1024, 0) < 0)
+        panic("Error sending response to peer.\n");
+
+    return 0;
 }
 
 int list_files(struct command* cmd) {

@@ -10,6 +10,7 @@ OBJS = \
 	list_requests.o \
 	accept_request.o \
 	reject_request.o \
+	list_groups.o \
 	logout.o \
 	quit.o \
 	commands.o \
