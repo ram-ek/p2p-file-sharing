@@ -44,7 +44,6 @@ int create_group(char* cmd) {
     
     char* response_code = strtok(response, WHITESPACE);
     if(!response_code) {
-        cout << response << '\n';
         console_write("Unexpected response from tracker. No response code found.\n");
         return 0;
     }

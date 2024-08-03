@@ -1,10 +1,6 @@
 #include "headers.h"
 #include "cmdcall.h"
 
-int accept_request(char* cmd) {
-    return 0;
-}
-
 int list_groups(char* cmd) {
     return 0;
 }

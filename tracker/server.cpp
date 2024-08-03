@@ -43,16 +43,16 @@ void* run_server(void* arg) {
         panic("Error listening to socket.\n");
 
     while(true) {
-        int sock_out;
+        int* sock_out = (int*)malloc(sizeof(int));
 
-        if((sock_out = accept(tracker_sock, (struct sockaddr*)&addr, &addrlen)) < 0)
+        if((*sock_out = accept(tracker_sock, (struct sockaddr*)&addr, &addrlen)) < 0)
             panic("Error accepting client connection.\n");
         
-        bind_user_to_port(sock_out, NO_USER);
+        bind_user_to_port(*sock_out, NO_USER);
         
         // dispatch thread to handle client
         pthread_t client_thread;
-        if(pthread_create(&client_thread, NULL, handle_client, &sock_out) != 0) {
+        if(pthread_create(&client_thread, NULL, handle_client, sock_out) != 0) {
             console_write("Failed to start client thread.\n");
             continue;
         }
