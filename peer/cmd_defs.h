@@ -6,6 +6,7 @@
 #define CONFLICT_CODE               "409"
 #define NOT_FOUND_CODE              "404"
 #define UNAUTHORIZED_CODE           "401"
+#define BAD_REQUEST_CODE            "400"
 // #define UNAUTHORIZED_ACCESS_CODE    "403"
 
 #endif

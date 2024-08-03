@@ -21,11 +21,6 @@ static int bad_request(char* payload) {
     return 0;
 }
 
-static int request_exists(char* payload) {
-    console_write(payload);
-    return 0;
-}
-
 static int unauthorized(char* payload) {
     console_write(payload);
     return 0;
@@ -36,16 +31,15 @@ static map<string, int(*)(char*)> response_handler = {
     { INVALID_FORMAT_CODE,  invalid_format },
     { NOT_FOUND_CODE,       no_group_found },
     { BAD_REQUEST_CODE,     bad_request },
-    { CONFLICT_CODE,        request_exists },
     { UNAUTHORIZED_CODE,    unauthorized }
 };
 
 /*
-    Sends join group request to tracker in format join_group <group_id>
+    Sends leave group request to tracker in format leave_group <group_id>
     Expects response from tracker as STATUS_CODE RESP
     Handles STATUS_CODE as 200(STATUS_OK), 422(INVALID_FORMAT), 404(NO_GROUP_FOUND), 400(BAD_REQUEST), 401(UNAUTHORIZED)
 */
-int join_group(char* cmd) {
+int leave_group(char* cmd) {
     if(send(peer_sock, cmd, SIZE_1024, 0) < 0)
         panic("Error sending response to peer.\n");
     
