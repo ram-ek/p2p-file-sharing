@@ -7,7 +7,9 @@ OBJS = \
 	create_group.o \
 	join_group.o \
 	leave_group.o \
+	list_requests.o \
 	logout.o \
+	quit.o \
 	commands.o \
 	cmdcall.o \
 	server.o \

@@ -3,7 +3,7 @@
 #define CREATE_GROUP        3
 #define JOIN_GROUP          4
 #define LEAVE_GROUP         5
-#define LIST_REQUEST        6
+#define LIST_REQUESTS       6
 #define ACCEPT_REQUEST      7
 #define LIST_GROUPS         8
 #define LIST_FILES          9
@@ -20,7 +20,7 @@ extern int login(char* cmd);
 extern int create_group(char* cmd);
 extern int join_group(char* cmd);
 extern int leave_group(char* cmd);
-extern int list_request(char* cmd);
+extern int list_requests(char* cmd);
 extern int accept_request(char* cmd);
 extern int list_groups(char* cmd);
 extern int list_files(char* cmd);

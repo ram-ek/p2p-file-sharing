@@ -5,7 +5,7 @@
 #define CREATE_GROUP        3
 #define JOIN_GROUP          4
 #define LEAVE_GROUP         5
-#define LIST_REQUEST        6
+#define LIST_REQUESTS       6
 #define ACCEPT_REQUEST      7
 #define LIST_GROUPS         8
 #define LIST_FILES          9
@@ -30,7 +30,7 @@ extern int login(struct command* cmd);
 extern int create_group(struct command* cmd);
 extern int join_group(struct command* cmd);
 extern int leave_group(struct command* cmd);
-extern int list_request(struct command* cmd);
+extern int list_requests(struct command* cmd);
 extern int accept_request(struct command* cmd);
 extern int list_groups(struct command* cmd);
 extern int list_files(struct command* cmd);

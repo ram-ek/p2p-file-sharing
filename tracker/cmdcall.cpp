@@ -2,22 +2,22 @@
 #include "cmdcall.h"
 
 map<string, int> cmdcallmap = {
-    {"create_user",     1},
-    {"login",           2},
-    {"create_group",    3},
-    {"join_group",      4},
-    {"leave_group",     5},
-    {"list_request",    6},
-    {"accept_request",  7},
-    {"list_groups",     8},
-    {"list_files",      9},
-    {"upload_file",     10},
-    {"download_file",   11},
-    {"logout",          12},
-    {"show_downloads",  13},
-    {"stop_share",      14},
-    {"invalid",         15},
-    {"quit",            16}
+    {"create_user",     CREATE_USER},
+    {"login",           LOGIN},
+    {"create_group",    CREATE_GROUP},
+    {"join_group",      JOIN_GROUP},
+    {"leave_group",     LEAVE_GROUP},
+    {"list_requests",   LIST_REQUESTS},
+    {"accept_request",  ACCEPT_REQUEST},
+    {"list_groups",     LIST_GROUPS},
+    {"list_files",      LIST_FILES},
+    {"upload_file",     UPLOAD_FILE},
+    {"download_file",   DOWNLOAD_FILE},
+    {"logout",          LOGOUT},
+    {"show_downloads",  SHOW_DOWNLOADS},
+    {"stop_share",      STOP_SHARE},
+    {"invalid",         INVALID},
+    {"quit",            QUIT}
 };
 
 static int (*cmdcalls[])(struct command* cmd) = {
@@ -26,7 +26,7 @@ static int (*cmdcalls[])(struct command* cmd) = {
     [CREATE_GROUP]      =create_group,
     [JOIN_GROUP]        =join_group,
     [LEAVE_GROUP]       =leave_group,
-    [LIST_REQUEST]      =list_request,
+    [LIST_REQUESTS]     =list_requests,
     [ACCEPT_REQUEST]    =accept_request,
     [LIST_GROUPS]       =list_groups,
     [LIST_FILES]        =list_files,
@@ -45,7 +45,7 @@ static int cmdcall_args[] = {
     [CREATE_GROUP]      =1,
     [JOIN_GROUP]        =1,
     [LEAVE_GROUP]       =1,
-    [LIST_REQUEST]      =1,
+    [LIST_REQUESTS]     =1,
     [ACCEPT_REQUEST]    =2,
     [LIST_GROUPS]       =1,
     [LIST_FILES]        =1,

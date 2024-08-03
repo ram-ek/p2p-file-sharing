@@ -42,7 +42,8 @@ int login(struct command* cmd) {
 }
 
 int create_group(struct command* cmd) {
-    if(get_user_from_port(cmd->sock_out) == NO_USER) {
+    string user = get_user_from_port(cmd->sock_out);
+    if(user == NO_USER) {
         if(send(cmd->sock_out, "401 You need to be logged in to execute this command.\n", SIZE_1024, 0) < 0)
             panic("Error sending response to peer.\n");
 
@@ -58,7 +59,7 @@ int create_group(struct command* cmd) {
 
     struct group* g = new group();
     g->group_name = cmd->argv[0];
-    g->group_owner = get_user_from_port(cmd->sock_out);
+    g->group_owner = user;
     g->group_members.insert(g->group_owner);
     group_list[g->group_name] = g;
 
@@ -85,21 +86,22 @@ int join_group(struct command* cmd) {
         return 0;
     }
 
-    if(group_list[group_name]->group_members.find(user) != group_list[group_name]->group_members.end()) {
+    struct group* g = group_list[group_name];
+    if(g->group_members.find(user) != g->group_members.end()) {
         if(send(cmd->sock_out, "400 You are already a member of this group.\n", SIZE_1024, 0) < 0)
             panic("Error sending response to peer.\n");
 
         return 0;
     }
 
-    if(group_list[group_name]->request_list.find(user) != group_list[group_name]->request_list.end()) {
+    if(g->request_list.find(user) != g->request_list.end()) {
         if(send(cmd->sock_out, "409 You have already requested to join this group.\n", SIZE_1024, 0) < 0)
             panic("Error sending response to peer.\n");
 
         return 0;
     }
 
-    group_list[group_name]->request_list.insert(user);
+    g->request_list.insert(user);
     if(send(cmd->sock_out, "200 Request to join group sent.\n", SIZE_1024, 0) < 0)
         panic("Error sending response to peer.\n");
 
@@ -123,19 +125,20 @@ int leave_group(struct command* cmd) {
         return 0;
     }
 
-    if(group_list[group_name]->group_members.find(user) == group_list[group_name]->group_members.end()) {
+    struct group* g = group_list[group_name];
+    if(g->group_members.find(user) == g->group_members.end()) {
         if(send(cmd->sock_out, "400 You are not a member of this group.\n", SIZE_1024, 0) < 0)
             panic("Error sending response to peer.\n");
 
         return 0;
     }
 
-    group_list[group_name]->group_members.erase(user);
-    if(group_list[group_name]->group_members.size() == 0)
+    g->group_members.erase(user);
+    if(g->group_members.size() == 0)
         group_list.erase(group_name);
 
-    else if(group_list[group_name]->group_owner == user)
-        group_list[group_name]->group_owner = *group_list[group_name]->group_members.begin();
+    else if(g->group_owner == user)
+        g->group_owner = *g->group_members.begin();
 
     if(send(cmd->sock_out, "200 Group left successfully.\n", SIZE_1024, 0) < 0)
         panic("Error sending response to peer.\n");
@@ -143,12 +146,50 @@ int leave_group(struct command* cmd) {
     return 0;
 }
 
-int list_request(struct command* cmd) {
+int list_requests(struct command* cmd) {
+    string user = get_user_from_port(cmd->sock_out);
+    if(user == NO_USER) {
+        if(send(cmd->sock_out, "401 You need to be logged in to execute this command.\n", SIZE_1024, 0) < 0)
+            panic("Error sending response to peer.\n");
 
+        return 0;
+    }
+
+    string group_name = cmd->argv[0];
+    if(group_list.find(group_name) == group_list.end()) {
+        if(send(cmd->sock_out, "404 No group found.\n", SIZE_1024, 0) < 0)
+            panic("Error sending response to peer.\n");
+
+        return 0;
+    }
+
+    struct group* g = group_list[group_name];
+    if(g->group_owner != user) {
+        if(send(cmd->sock_out, "403 You don't have permission to execute this command.\n", SIZE_1024, 0) < 0)
+            panic("Error sending response to peer.\n");
+
+        return 0;
+    }
+
+    if(g->request_list.size() == 0) {
+        if(send(cmd->sock_out, "200 No pending requests.\n", SIZE_1024, 0) < 0)
+            panic("Error sending response to peer.\n");
+
+        return 0;
+    }
+
+    string resp = "";
+    for(string req: g->request_list)
+        resp += req + '\n';
+
+    if(send(cmd->sock_out, ("200 "+resp).c_str(), SIZE_1024, 0) < 0)
+        panic("Error sending response to peer.\n");
+
+    return 0;
 }
 
 int accept_request(struct command* cmd) {
-
+    
 }
 
 int list_groups(struct command* cmd) {
