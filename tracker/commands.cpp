@@ -197,7 +197,7 @@ int accept_request(struct command* cmd) {
         return 0;
     }
 
-    string group_name = cmd->argv[0], user_accept = cmd->argv[1];
+    string group_name = cmd->argv[0], request_user = cmd->argv[1];
     if(group_list.find(group_name) == group_list.end()) {
         if(send(cmd->sock_out, "404 No group found.\n", SIZE_1024, 0) < 0)
             panic("Error sending response to peer.\n");
@@ -213,16 +213,55 @@ int accept_request(struct command* cmd) {
         return 0;
     }
 
-    if(g->request_list.find(user_accept) == g->request_list.end()) {
+    if(g->request_list.find(request_user) == g->request_list.end()) {
         if(send(cmd->sock_out, "404 No request from user found.\n", SIZE_1024, 0) < 0)
             panic("Error sending response to peer.\n");
 
         return 0;
     }
 
-    g->group_members.insert(user_accept);
-    g->request_list.erase(user_accept);
+    g->group_members.insert(request_user);
+    g->request_list.erase(request_user);
     if(send(cmd->sock_out, "200 User added to group successfully.\n", SIZE_1024, 0) < 0)
+        panic("Error sending response to peer.\n");
+
+    return 0;
+}
+
+int reject_request(struct command* cmd) {
+    string user = get_user_from_port(cmd->sock_out);
+    if(user == NO_USER) {
+        if(send(cmd->sock_out, "401 You need to be logged in to execute this command.\n", SIZE_1024, 0) < 0)
+            panic("Error sending response to peer.\n");
+
+        return 0;
+    }
+
+    string group_name = cmd->argv[0], request_user = cmd->argv[1];
+    if(group_list.find(group_name) == group_list.end()) {
+        if(send(cmd->sock_out, "404 No group found.\n", SIZE_1024, 0) < 0)
+            panic("Error sending response to peer.\n");
+
+        return 0;
+    }
+
+    struct group* g = group_list[group_name];
+    if(g->group_owner != user) {
+        if(send(cmd->sock_out, "403 You don't have permission to execute this command.\n", SIZE_1024, 0) < 0)
+            panic("Error sending response to peer.\n");
+
+        return 0;
+    }
+
+    if(g->request_list.find(request_user) == g->request_list.end()) {
+        if(send(cmd->sock_out, "404 No request from user found.\n", SIZE_1024, 0) < 0)
+            panic("Error sending response to peer.\n");
+
+        return 0;
+    }
+
+    g->request_list.erase(request_user);
+    if(send(cmd->sock_out, "200 User request rejected.\n", SIZE_1024, 0) < 0)
         panic("Error sending response to peer.\n");
 
     return 0;

@@ -9,6 +9,7 @@ OBJS = \
 	leave_group.o \
 	list_requests.o \
 	accept_request.o \
+	reject_request.o \
 	logout.o \
 	quit.o \
 	commands.o \
