@@ -1,10 +1,6 @@
 #include "headers.h"
 #include "cmdcall.h"
 
-int list_files(char* cmd) {
-    return 0;
-}
-
 int download_file(char* cmd) {
     return 0;
 }
