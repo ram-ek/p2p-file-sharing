@@ -69,6 +69,11 @@ void connect_tracker() {
                 if(connect(peer_sock, (struct sockaddr*)&addr, sizeof(addr)) >= 0) {
                     tracker_list[host_cnt+1].insert(make_pair(tracker_addr, tracker_port));
                     tracker_list[host_cnt].erase(make_pair(tracker_addr, tracker_port));
+
+                    // send peerip:peerport to tracker
+                    if(send(peer_sock, (string(peer_ip) + ":" + to_string(peer_port)).c_str(), SIZE_1024, 0) < 0)
+                        panic("Error sending message to tracker.\n");
+
                     return;
                 }
             }
@@ -77,3 +82,16 @@ void connect_tracker() {
 
     panic("Unable to connect to tracker.\n");
 }
+
+long long get_file_size(const char* file_name) {
+    FILE* fp = fopen(file_name, "r");
+
+    if (fp == NULL)
+        return -1;
+  
+    fseek(fp, 0LL, SEEK_END);
+    long long size = ftell(fp);
+    fclose(fp);
+  
+    return size;
+} 

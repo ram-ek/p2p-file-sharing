@@ -15,6 +15,7 @@
 using namespace std;
 
 #define SIZE_1024 1024
+#define CHUNK_SIZE 524288
 #define MAX_RETRY 10
 #define BACKLOG 10
 #define WHITESPACE " \t\r\n\v"
@@ -26,6 +27,7 @@ void peek(char*, char*, char*);
 vector<string> get_tokens(char*, char*);
 void* run_server(void*);
 void connect_tracker(void);
+long long get_file_size(const char*);
 int process_cmd(char*);
 void get_console(void);
 

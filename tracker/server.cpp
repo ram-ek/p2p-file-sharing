@@ -48,7 +48,14 @@ void* run_server(void* arg) {
         if((*sock_out = accept(tracker_sock, (struct sockaddr*)&addr, &addrlen)) < 0)
             panic("Error accepting client connection.\n");
         
-        bind_user_to_port(*sock_out, NO_USER);
+        // getting server peerid from peer
+        char peerid[SIZE_1024];
+        bzero(peerid, SIZE_1024);
+        if(recv(*sock_out, peerid, SIZE_1024, 0) < 0)
+            panic("Error receiving command from peer.\n");
+
+        bind_peerid_to_sock(*sock_out, peerid);
+        bind_user_to_sock(*sock_out, NO_USER);
         
         // dispatch thread to handle client
         pthread_t client_thread;

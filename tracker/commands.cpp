@@ -36,13 +36,13 @@ int login(struct command* cmd) {
     if(send(cmd->sock_out, ("200 "+username).c_str(), SIZE_1024, 0) < 0)
         panic("Error sending response to peer.\n");
 
-    bind_user_to_port(cmd->sock_out, username);
+    bind_user_to_sock(cmd->sock_out, username);
 
     return 0;
 }
 
 int create_group(struct command* cmd) {
-    string user = get_user_from_port(cmd->sock_out);
+    string user = get_user_from_sock(cmd->sock_out);
     if(user == NO_USER) {
         if(send(cmd->sock_out, "401 You need to be logged in to execute this command.\n", SIZE_1024, 0) < 0)
             panic("Error sending response to peer.\n");
@@ -70,7 +70,7 @@ int create_group(struct command* cmd) {
 }
 
 int join_group(struct command* cmd) {
-    string user = get_user_from_port(cmd->sock_out);
+    string user = get_user_from_sock(cmd->sock_out);
     if(user == NO_USER) {
         if(send(cmd->sock_out, "401 You need to be logged in to execute this command.\n", SIZE_1024, 0) < 0)
             panic("Error sending response to peer.\n");
@@ -109,7 +109,7 @@ int join_group(struct command* cmd) {
 }
 
 int leave_group(struct command* cmd) {
-    string user = get_user_from_port(cmd->sock_out);
+    string user = get_user_from_sock(cmd->sock_out);
     if(user == NO_USER) {
         if(send(cmd->sock_out, "401 You need to be logged in to execute this command.\n", SIZE_1024, 0) < 0)
             panic("Error sending response to peer.\n");
@@ -147,7 +147,7 @@ int leave_group(struct command* cmd) {
 }
 
 int list_requests(struct command* cmd) {
-    string user = get_user_from_port(cmd->sock_out);
+    string user = get_user_from_sock(cmd->sock_out);
     if(user == NO_USER) {
         if(send(cmd->sock_out, "401 You need to be logged in to execute this command.\n", SIZE_1024, 0) < 0)
             panic("Error sending response to peer.\n");
@@ -189,7 +189,7 @@ int list_requests(struct command* cmd) {
 }
 
 int accept_request(struct command* cmd) {
-    string user = get_user_from_port(cmd->sock_out);
+    string user = get_user_from_sock(cmd->sock_out);
     if(user == NO_USER) {
         if(send(cmd->sock_out, "401 You need to be logged in to execute this command.\n", SIZE_1024, 0) < 0)
             panic("Error sending response to peer.\n");
@@ -229,7 +229,7 @@ int accept_request(struct command* cmd) {
 }
 
 int reject_request(struct command* cmd) {
-    string user = get_user_from_port(cmd->sock_out);
+    string user = get_user_from_sock(cmd->sock_out);
     if(user == NO_USER) {
         if(send(cmd->sock_out, "401 You need to be logged in to execute this command.\n", SIZE_1024, 0) < 0)
             panic("Error sending response to peer.\n");
@@ -268,7 +268,7 @@ int reject_request(struct command* cmd) {
 }
 
 int list_groups(struct command* cmd) {
-    string user = get_user_from_port(cmd->sock_out);
+    string user = get_user_from_sock(cmd->sock_out);
     if(user == NO_USER) {
         if(send(cmd->sock_out, "401 You need to be logged in to execute this command.\n", SIZE_1024, 0) < 0)
             panic("Error sending response to peer.\n");
@@ -298,7 +298,56 @@ int list_files(struct command* cmd) {
 }
 
 int upload_file(struct command* cmd) {
+    string user = get_user_from_sock(cmd->sock_out);
+    if(user == NO_USER) {
+        if(send(cmd->sock_out, "401 You need to be logged in to execute this command.\n", SIZE_1024, 0) < 0)
+            panic("Error sending response to peer.\n");
 
+        return 0;
+    }
+
+    string file_path = cmd->argv[0], group_name = cmd->argv[1];
+    long long num_chunks = stoll(cmd->argv[2]);
+    if(group_list.find(group_name) == group_list.end()) {
+        if(send(cmd->sock_out, "404 No group found.\n", SIZE_1024, 0) < 0)
+            panic("Error sending response to peer.\n");
+
+        return 0;
+    }
+
+    struct group* g = group_list[group_name];
+    if(g->group_members.find(user) == g->group_members.end()) {
+        if(send(cmd->sock_out, "403 You are not part of this group.\n", SIZE_1024, 0) < 0)
+            panic("Error sending response to peer.\n");
+
+        return 0;
+    }
+
+    string file_name = file_path.substr(file_path.find_last_of('/') + 1);
+    string peerid = get_peerid_from_sock(cmd->sock_out);
+    if(g->file_list.find(file_name) == g->file_list.end()) {
+        struct file* f = new file();
+        f->file_name = file_name;
+        f->chunks.resize(num_chunks);
+        g->file_list[file_name] = f;
+    }
+
+    struct file* f = g->file_list[file_name];
+    if(f->share_list.find(peerid) != f->share_list.end()) {
+        if(send(cmd->sock_out, "409 You have already uploaded a file with same name.\n", SIZE_1024, 0) < 0)
+            panic("Error sending response to peer.\n");
+
+        return 0;
+    }
+
+    f->share_list[peerid] = file_path;
+    for(auto& chunk: f->chunks)
+        chunk.insert(peerid);
+
+    if(send(cmd->sock_out, "200 File uploaded successfully.\n", SIZE_1024, 0) < 0)
+        panic("Error sending response to peer.\n");
+
+    return 0;
 }
 
 int download_file(struct command* cmd) {
@@ -316,7 +365,7 @@ int logout(struct command* cmd) {
     if(send(cmd->sock_out, "200 User logged out successfully.\n", SIZE_1024, 0) < 0)
         panic("Error sending response to peer.\n");
 
-    bind_user_to_port(cmd->sock_out, NO_USER);
+    bind_user_to_sock(cmd->sock_out, NO_USER);
 
     return 0;
 }
@@ -341,7 +390,7 @@ int quit(struct command* cmd) {
         panic("Error sending response to peer.");
 
     // free up the port mapping for other users
-    remove_port_bind(cmd->sock_out);
+    remove_sock_bind(cmd->sock_out);
 
     return 1;
 }

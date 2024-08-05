@@ -11,6 +11,7 @@ OBJS = \
 	accept_request.o \
 	reject_request.o \
 	list_groups.o \
+	upload_file.o \
 	logout.o \
 	quit.o \
 	commands.o \

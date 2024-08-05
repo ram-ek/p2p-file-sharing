@@ -4,7 +4,7 @@ void process_args(char* argv[]) {
     vector<string> socket_id = get_tokens(argv[1], ":");
     
     if(socket_id.size() != 2)
-        panic("Invalid socket id provided.");
+        panic("Invalid socket id provided.\n");
 
     tracker_ip = new char[socket_id[0].size() + 1];
     strcpy(tracker_ip, socket_id[0].c_str());
@@ -45,14 +45,22 @@ vector<string> get_tokens(char* s, char* deli) {
     return tokens;
 }
 
-void bind_user_to_port(int port, string user) {
-    port_to_user[port] = user;
+void bind_user_to_sock(int sock, string user) {
+    sock_to_user[sock] = user;
 }
 
-string get_user_from_port(int port) {
-    return port_to_user[port];
+string get_user_from_sock(int sock) {
+    return sock_to_user[sock];
 }
 
-void remove_port_bind(int port) {
-    port_to_user.erase(port);
+void remove_sock_bind(int sock) {
+    sock_to_user.erase(sock);
+}
+
+void bind_peerid_to_sock(int sock, string peerid) {
+    sock_to_peerid[sock] = peerid;
+}
+
+string get_peerid_from_sock(int sock) {
+    return sock_to_peerid[sock];
 }
