@@ -43,7 +43,7 @@ static int (*cmdcalls[])(char* cmd) = {
 
 int process_cmd(char* cmd) {
     // get command type
-    char cmd_type[20]; // greater than max command length
+    char cmd_type[100]; // greater than max command length
     peek(cmd, cmd_type, WHITESPACE);
     
     if(strcmp(cmd_type, "") == 0)

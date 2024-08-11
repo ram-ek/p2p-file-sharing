@@ -29,7 +29,7 @@ static map<string, int(*)(char*)> response_handler = {
 */
 int create_user(char* cmd) {
     if(send(peer_sock, cmd, SIZE_1024, 0) < 0)
-        panic("Error sending response to peer.\n");
+        panic("Error sending command to tracker.\n");
     
     char response[SIZE_1024];
     bzero(response, SIZE_1024);

@@ -10,7 +10,7 @@ void process_args(char* argv[]) {
     strcpy(peer_ip, peer_socket_id[0].c_str());
     peer_port = stoi(peer_socket_id[1]);
 
-    // process tracker info
+    // process tracker info(using static ip and port for now)
     tracker_list[0].insert(make_pair("127.0.0.1", 7000));
 }
 
@@ -51,7 +51,6 @@ void connect_tracker() {
         panic("Error creating socket.\n");
 
     struct sockaddr_in addr;
-
     addr.sin_family = AF_INET;
 
     // max tries to connect to tracker

@@ -1,10 +1,50 @@
 #include "headers.h"
 
 void* handle_peer(void* arg) {
-    int* sock_out = (int*) arg;
-    console_write(("\nConnected to socket " + to_string(*sock_out) + '\n').c_str());
-    console_write(">> ");
+    int sock_out = *(int*) arg;
+    free(arg);
+    // download file request
+    char cmd[SIZE_1024];
+    bzero(cmd, SIZE_1024);
 
+    if(recv(sock_out, cmd, SIZE_1024, 0) < 0) {
+        console_write("Error receiving request from peer.\n");
+        close(sock_out);
+        return NULL;
+    }
+    cout << cmd << '\n';
+    // make a command struct to process command ?
+    vector<string> tokens = get_tokens(cmd, WHITESPACE);
+
+    // check for invalid command
+    if(tokens[0] != "download") {
+        if(send(sock_out, "422 Invalid command format.\n", SIZE_1024, 0) < 0)
+            panic("Error sending chunk to peer.\n");
+        
+        return NULL;
+    }
+
+    // handle download
+    string file_name = tokens[1];
+    long long chunk_index = stoll(tokens[2]);
+    string file_path = file_paths[file_name];
+
+    int fd;
+    if((fd = open(file_path.c_str(), O_RDONLY)) < 0)
+        panic("File not found.\n");
+
+    if(lseek(fd, chunk_index*CHUNK_SIZE, SEEK_SET) < 0)
+        panic("Not able to seek to desired chunk.\n");
+
+    char chunk[CHUNK_SIZE];
+    if(read(fd, chunk, CHUNK_SIZE) < 0)
+        panic("Unable to read chunk");
+
+    if(send(sock_out, chunk, CHUNK_SIZE, 0) < 0)
+        panic("Error sending chunk to peer.\n");
+
+    close(fd);
+    close(sock_out);
     return NULL;
 }
 
@@ -27,21 +67,28 @@ void* run_server(void* arg) {
 
     if(listen(sock_in, BACKLOG) < 0)
         panic("Error listening to socket.\n");
-    
+    cout << "listening to port " << peer_ip << ' ' << peer_port << '\n';
     while(true) {
-        int sock_out;
+        int* sock_out = (int*)malloc(sizeof(int));
 
-        if((sock_out = accept(sock_in, (struct sockaddr*)&addr, &addrlen)) < 0)
-            panic("Error accepting client connection.\n");
+        if((*sock_out = accept(sock_in, (struct sockaddr*)&addr, &addrlen)) < 0) {
+            console_write("Error accepting peer connection.\n");
+            free(sock_out);
+        }
+        cout << sock_in << '\n';
+        // dispatch thread to handle peer
+        pthread_t peer_thread;
+        pthread_attr_t detached_attribute;
+        pthread_attr_init(&detached_attribute);
+        pthread_attr_setdetachstate(&detached_attribute, PTHREAD_CREATE_DETACHED);
 
-        // dispatch thread to handle client
-        pthread_t client_thread;
-        if(pthread_create(&client_thread, NULL, handle_peer, &sock_out) != 0) {
-            console_write("Failed to start client thread.\n");
-            continue;
+        if(pthread_create(&peer_thread, &detached_attribute, handle_peer, (void*)sock_out) != 0) {
+            console_write("Failed to start peer thread.\n");
+            close(*sock_out);
+            free(sock_out);
         }
 
-        pthread_detach(client_thread);
+        pthread_attr_destroy(&detached_attribute);
     }
 
     return NULL;

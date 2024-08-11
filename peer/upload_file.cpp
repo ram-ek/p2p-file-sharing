@@ -1,4 +1,3 @@
-// get command then get the number of chunks by getting file size and send at the end of command
 #include "headers.h"
 #include "cmd_defs.h"
 
@@ -57,8 +56,9 @@ int upload_file(char* cmd) {
     }
 
     long long chunks_num = (file_size + CHUNK_SIZE - 1) / CHUNK_SIZE;
-    cout << string(cmd) + " " + to_string(chunks_num) << '\n';
-    // here
+    string file_name = file_path.substr(file_path.find_last_of('/') + 1);
+    file_paths[file_name] = file_path;
+    
     if(send(peer_sock, (string(cmd) + " " + to_string(chunks_num)).c_str(), SIZE_1024, 0) < 0)
         panic("Error sending response to peer.\n");
     

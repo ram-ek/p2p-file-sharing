@@ -13,6 +13,7 @@ OBJS = \
 	list_groups.o \
 	upload_file.o \
 	list_files.o \
+	download_file.o \
 	logout.o \
 	quit.o \
 	commands.o \

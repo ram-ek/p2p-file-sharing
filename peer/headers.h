@@ -11,6 +11,7 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
+#include <fcntl.h>
 
 using namespace std;
 
@@ -37,5 +38,7 @@ extern int peer_sock;
 extern char* peer_ip;
 extern int peer_port;
 extern map<int, set<pair<const char*, int> > > tracker_list;
+extern vector<int> peer_connections;
+extern map<string, string> file_paths;
 
 #endif

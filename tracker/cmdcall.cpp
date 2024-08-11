@@ -14,6 +14,7 @@ map<string, int> cmdcallmap = {
     {"list_files",      LIST_FILES},
     {"upload_file",     UPLOAD_FILE},
     {"download_file",   DOWNLOAD_FILE},
+    {"got_chunk",       GOT_CHUNK},
     {"logout",          LOGOUT},
     {"show_downloads",  SHOW_DOWNLOADS},
     {"stop_share",      STOP_SHARE},
@@ -21,7 +22,7 @@ map<string, int> cmdcallmap = {
     {"quit",            QUIT}
 };
 
-static int (*cmdcalls[])(struct command* cmd) = {
+static int (*cmdcalls[])(Command* cmd) = {
     [CREATE_USER]       =create_user,
     [LOGIN]             =login,
     [CREATE_GROUP]      =create_group,
@@ -34,6 +35,7 @@ static int (*cmdcalls[])(struct command* cmd) = {
     [LIST_FILES]        =list_files,
     [UPLOAD_FILE]       =upload_file,
     [DOWNLOAD_FILE]     =download_file,
+    [GOT_CHUNK]         =got_chunk,
     [LOGOUT]            =logout,
     [SHOW_DOWNLOADS]    =show_downloads,
     [STOP_SHARE]        =stop_share,
@@ -54,6 +56,7 @@ static int cmdcall_args[] = {
     [LIST_FILES]        =1,
     [UPLOAD_FILE]       =3,
     [DOWNLOAD_FILE]     =3,
+    [GOT_CHUNK]         =2,
     [LOGOUT]            =0,
     [SHOW_DOWNLOADS]    =0,
     [STOP_SHARE]        =2,
@@ -61,25 +64,26 @@ static int cmdcall_args[] = {
     [QUIT]              =0
 };
 
-int cmdcall(struct command* cmd) {
+int cmdcall(Command* cmd) {
     if(cmd->cmd_num != INVALID && cmd->argc != cmd->argv.size()) {
+        cout << "oh no\n";
         cmd->cmd_num = INVALID;
-        cmd->msg = "Argument number mismatch, expected " + to_string(cmd->argc) + " got " + to_string(cmd->argv.size());
+        cmd->msg = "Argument number mismatch, expected " + to_string(cmd->argc) + " got " + to_string(cmd->argv.size()) + "\n";
     }
     
     return cmdcalls[cmd->cmd_num](cmd);
 }
 
-int process_cmd(char* cmd_line, int* sock_out) {
-    struct command cmd;
+int process_cmd(char* cmd_line, int sock_out) {
+    Command cmd;
     vector<string> cmd_tokens = get_tokens(cmd_line, WHITESPACE);
 
-    cmd.sock_out = *sock_out;
+    cmd.sock_out = sock_out;
     if(cmdcallmap.find(cmd_tokens[0]) == cmdcallmap.end()) {
         cmd.cmd_num = INVALID;
         cmd.argc = cmdcall_args[INVALID];
         cmd.argv = {};
-        cmd.msg = "Invalid command.";
+        cmd.msg = "Invalid command.\n";
     }
     else {
         cmd.cmd_num = cmdcallmap[cmd_tokens[0]];

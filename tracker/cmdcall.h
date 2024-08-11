@@ -12,34 +12,36 @@
 #define LIST_FILES          10
 #define UPLOAD_FILE         11
 #define DOWNLOAD_FILE       12
-#define LOGOUT              13
-#define SHOW_DOWNLOADS      14
-#define STOP_SHARE          15
-#define INVALID             16
-#define QUIT                17
+#define GOT_CHUNK           13
+#define LOGOUT              14
+#define SHOW_DOWNLOADS      15
+#define STOP_SHARE          16
+#define INVALID             17
+#define QUIT                18
 
-struct command {
+typedef struct Command {
     int sock_out;
     int cmd_num;
     int argc;
     vector<string> argv;
     string msg;
-};
+} Command;
 
-extern int create_user(struct command* cmd);
-extern int login(struct command* cmd);
-extern int create_group(struct command* cmd);
-extern int join_group(struct command* cmd);
-extern int leave_group(struct command* cmd);
-extern int list_requests(struct command* cmd);
-extern int accept_request(struct command* cmd);
-extern int reject_request(struct command* cmd);
-extern int list_groups(struct command* cmd);
-extern int list_files(struct command* cmd);
-extern int upload_file(struct command* cmd);
-extern int download_file(struct command* cmd);
-extern int logout(struct command* cmd);
-extern int show_downloads(struct command* cmd);
-extern int stop_share(struct command* cmd);
-extern int invalid(struct command* cmd);
-extern int quit(struct command* cmd);
+extern int create_user(Command* cmd);
+extern int login(Command* cmd);
+extern int create_group(Command* cmd);
+extern int join_group(Command* cmd);
+extern int leave_group(Command* cmd);
+extern int list_requests(Command* cmd);
+extern int accept_request(Command* cmd);
+extern int reject_request(Command* cmd);
+extern int list_groups(Command* cmd);
+extern int list_files(Command* cmd);
+extern int upload_file(Command* cmd);
+extern int download_file(Command* cmd);
+extern int got_chunk(Command* cmd);
+extern int logout(Command* cmd);
+extern int show_downloads(Command* cmd);
+extern int stop_share(Command* cmd);
+extern int invalid(Command* cmd);
+extern int quit(Command* cmd);

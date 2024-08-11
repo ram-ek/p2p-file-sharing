@@ -11,6 +11,7 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
+#include <time.h>
 
 using namespace std;
 
@@ -19,25 +20,25 @@ using namespace std;
 #define NO_USER "NO_USER"
 #define WHITESPACE " \t\r\n\v"
 
-struct file {
+typedef struct File {
     string file_name;
-    map<string, string> share_list;
-    vector<set<string>> chunks;
-};
+    set<string> share_list;
+    vector<set<string>> chunks; // ordered_set can be used
+} File;
 
-struct group {
+typedef struct Group {
     string group_name;
     string group_owner;
     set<string> group_members;
     set<string> request_list;
-    map<string, struct file*> file_list;
-};
+    map<string, File*> file_list;
+} Group;
 
 void console_write(const char*);
 void panic(const char*);
 void process_args(char**);
 void* run_server(void*);
-int process_cmd(char*, int*);
+int process_cmd(char*, int);
 void peek(char*, char*, char*);
 vector<string> get_tokens(char*, char*);
 void bind_user_to_sock(int, string);
@@ -54,6 +55,6 @@ extern int tracker_sock;
 extern map<string, string> user_list;
 extern map<int, string> sock_to_user;
 extern map<int, string> sock_to_peerid;
-extern map<string, struct group*> group_list;
+extern map<string, Group*> group_list;
 
 #endif
