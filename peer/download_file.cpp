@@ -10,6 +10,8 @@ typedef struct Download_info {
     string peerid;
 } Download_info;
 
+char* group_name;
+
 void* download_handler(void* arg) {
     Download_info* df = (Download_info*)arg;
     string download_file_name = df->file_name;
@@ -37,30 +39,27 @@ void* download_handler(void* arg) {
     if((send(down_sock, ("download " + download_file_name + " " + to_string(df->index)).c_str(), SIZE_1024, 0)) < 0)
         panic("Unable to send download command to peer.\n");
 
-    char recv_chunk[CHUNK_SIZE+1];
+    char recv_chunk[CHUNK_SIZE];
     bzero(recv_chunk, CHUNK_SIZE);
-    if((recv(down_sock, recv_chunk, CHUNK_SIZE, 0)) < 0)
+
+    int recv_len;
+    if((recv_len = recv(down_sock, recv_chunk, CHUNK_SIZE, 0)) < 0)
         panic("Unable to receive chunk from peer.\n");
 
-    cout << strlen(recv_chunk) << '\n';
-    if(df->index == df->chunks_num - 1)
-        recv_chunk[strlen(recv_chunk)] = '\0';
-
-    cout << "recv: " << recv_chunk << '\n';
     // write the chunk to file (to default location)
     const char* download_path = ("./data/"+download_file_name).c_str();
     int fd;
-    if((fd = open(download_path, O_RDWR | O_CREAT, S_IRWXU)) < 0)
+    if((fd = open(download_path, O_WRONLY | O_CREAT, S_IRWXU)) < 0)
         panic("Unable to open download file.\n");
 
     if(lseek(fd, df->index*CHUNK_SIZE, SEEK_SET) < 0)
         panic("Error seeking file descriptor.\n");
     
-    if(write(fd, recv_chunk, strlen(recv_chunk)) < 0)
+    if(write(fd, recv_chunk, recv_len) < 0)
         panic("Error writing chunk to file.\n");
 
     // send got_chunk message to tracker to update its list of chunks available with users
-    if(send(peer_sock, ("got_chunk " + download_file_name + " " + to_string(df->index)).c_str(), SIZE_1024, 0) < 0)
+    if(send(peer_sock, ("got_chunk " + string(group_name) + " " + download_file_name + " " + to_string(df->index)).c_str(), SIZE_1024, 0) < 0)
         panic("Error sending message to tracker.\n");
 
     if((recv(peer_sock, recv_chunk, CHUNK_SIZE, 0)) < 0)
@@ -129,6 +128,11 @@ static map<string, int(*)(char*)> response_handler = {
     Handles STATUS_CODE as 200(STATUS_OK), 422(INVALID_FORMAT), 404(NOT_FOUND), 403(FORBIDDEN), 409(CONFLICT_CODE), 401(UNAUTHORIZED)
 */
 int download_file(char* cmd) {
+    string temp = cmd;
+    strtok((char*)temp.c_str(), WHITESPACE);
+    group_name = strtok(NULL, WHITESPACE);
+    cout << group_name << '\n';
+    cout << cmd << '\n';
     if(send(peer_sock, cmd, SIZE_1024, 0) < 0)
         panic("Error sending command to tracker.\n");
     

@@ -13,7 +13,7 @@ void* handle_client(void* arg) {
             console_write("Error receiving command from peer.\n");
             break;
         }
-        cout << cmd << '\n';
+        
         if(process_cmd(cmd, sock_out) != 0)
             break;
     }

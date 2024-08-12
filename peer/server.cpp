@@ -12,7 +12,7 @@ void* handle_peer(void* arg) {
         close(sock_out);
         return NULL;
     }
-    cout << cmd << '\n';
+    
     // make a command struct to process command ?
     vector<string> tokens = get_tokens(cmd, WHITESPACE);
 
@@ -37,10 +37,11 @@ void* handle_peer(void* arg) {
         panic("Not able to seek to desired chunk.\n");
 
     char chunk[CHUNK_SIZE];
-    if(read(fd, chunk, CHUNK_SIZE) < 0)
+    int chunk_len;
+    if((chunk_len = read(fd, chunk, CHUNK_SIZE)) < 0)
         panic("Unable to read chunk");
-
-    if(send(sock_out, chunk, CHUNK_SIZE, 0) < 0)
+    
+    if(send(sock_out, chunk, chunk_len, 0) < 0)
         panic("Error sending chunk to peer.\n");
 
     close(fd);
@@ -67,7 +68,7 @@ void* run_server(void* arg) {
 
     if(listen(sock_in, BACKLOG) < 0)
         panic("Error listening to socket.\n");
-    cout << "listening to port " << peer_ip << ' ' << peer_port << '\n';
+    
     while(true) {
         int* sock_out = (int*)malloc(sizeof(int));
 
@@ -75,7 +76,7 @@ void* run_server(void* arg) {
             console_write("Error accepting peer connection.\n");
             free(sock_out);
         }
-        cout << sock_in << '\n';
+        
         // dispatch thread to handle peer
         pthread_t peer_thread;
         pthread_attr_t detached_attribute;

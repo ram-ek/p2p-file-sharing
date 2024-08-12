@@ -599,6 +599,10 @@ int got_chunk(Command* cmd) {
     string peerid = get_peerid_from_sock(cmd->sock_out);
     f->share_list.insert(user);
     f->chunks[chunk_index].insert(peerid);
+    if(send(cmd->sock_out, "200 Acknowledged.\n", SIZE_1024, 0) < 0) {
+        console_write("Error sending response to peer.\n");
+        return -1;
+    }
 
     return 0;
 }
@@ -633,7 +637,7 @@ int stop_share(Command* cmd) {
 }
 
 int invalid(Command* cmd) {
-    if(send(cmd->sock_out, "422 " + cmd->msg, SIZE_1024, 0) < 0) {
+    if(send(cmd->sock_out, ("422 " + cmd->msg).c_str(), SIZE_1024, 0) < 0) {
         console_write("Error sending response to peer.");
         return -1;
     }
