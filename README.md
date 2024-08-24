@@ -7,23 +7,6 @@
 # Architecture
 - It follows a hybrid architecture where a tracker is responsible for handling the requests from peers.
 
-# Working
-1. User should create an account and register with tracker.
-2. Login using the user credentials.
-3. Tracker maintains information of clients with their files(shared by client) to assist the clients for the communication between peers.
-4. User can create Group and hence will become admin of that group.
-5. User can fetch list of all Groups in server.
-6. User can join/leave group.
-7. Group admin can accept group join requests.
-8. Fetch list of all sharable files in a Group.
-9. Download:
-    - Retrieve peer information from tracker for the file.
-    - Download file from multiple peers (different pieces of file from different peers - ​piece selection algorithm​) simultaneously and all the files which client downloads will be shareable to other users in the same group. File integrity is ensured using SHA1 comparison.
-    - Piece selection algorithm used selects random piece and then downloads it from a random peer having that piece.
-10. Show downloads.
-11. Stop sharing file.
-12. Logout from the terminal.
-
 # Execution
 1. Create user
 ```
@@ -60,6 +43,11 @@ list_requests <group_id>
 accept_request <group_id> <username>
 ```
 
+7. Reject group joining request
+```
+reject_request <group_id> <username>
+```
+
 8. List all groups
 ```
 list_groups
@@ -94,3 +82,24 @@ show_downloads
 ```
 stop_share <group_id> <filename>
 ```
+
+# Commands Working
+1. User should create an account and register with tracker.
+2. Login using the user credentials.
+3. Tracker maintains information of clients with their files(shared by client) to assist the clients for the communication between peers.
+4. User can create Group and hence will become admin of that group.
+5. User can fetch list of all Groups in server.
+6. User can join group.
+7. User can leave a group,
+   - If he is admin then another user from the group is made admin
+   - If there is no other member in the group them the group is removed.
+9. Group admin can accept group join requests.
+10. Group admin can reject group join requests.
+11. Fetch list of all sharable files in a Group.
+12. Download:
+    - Get seeder information from tracker for the file.
+    - Download file from multiple seeders (different pieces of file from different seeders based on some ​piece selection algorithm​) simultaneously and all the files which client downloads will be shareable to other users in the same group. File integrity is ensured using SHA1 comparison.
+    - Piece selection algorithm used selects the piece which has least amount of seeders and is downloaded first. This boosts replication and increases the probability that the files are available to download even if some seeders stop sharing.
+13. Show current downloads as well as downloaded files.
+14. Stop sharing file.
+15. Logout from the terminal.
