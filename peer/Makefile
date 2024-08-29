@@ -1,5 +1,7 @@
 CC=g++
 CFLAGS=-Wall -std=c++20
+OPENSSL_CFLAGS = $(shell pkg-config --cflags openssl)
+OPENSSL_LIBS = $(shell pkg-config --libs openssl)
 OBJS = \
 	console.o \
 	create_user.o \
@@ -24,10 +26,10 @@ OBJS = \
 all: main
 
 %.o: %.cpp
-	$(CC) $(CFLAGS) -c $^
+	$(CC) $(CFLAGS) $(OPENSSL_CFLAGS) -c $^
 
 main: $(OBJS) main.cpp
-	$(CC) $(CFLAGS) -o main.out $^
+	$(CC) $(CFLAGS) -o main.out $^ $(OPENSSL_LIBS)
 
 clean:
 	rm -rf *.o main.out

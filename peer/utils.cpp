@@ -1,4 +1,5 @@
 #include "headers.h"
+#include <openssl/sha.h>
 
 void process_args(char* argv[]) {
     // set up peer ip and port
@@ -93,4 +94,19 @@ long long get_file_size(const char* file_name) {
     fclose(fp);
   
     return size;
-} 
+}
+
+string sha1(const unsigned char buff[], size_t size) {
+    unsigned char hash[SHA_DIGEST_LENGTH];
+
+    SHA1(buff, size-1, hash);
+
+    char sha1string[SHA_DIGEST_LENGTH*2 + 1];
+
+    for(int i = 0; i < SHA_DIGEST_LENGTH; i++)  
+    {  
+        sprintf(&sha1string[i*2], "%02x", (unsigned int)hash[i]);  
+    }
+
+    return string(sha1string);
+}
